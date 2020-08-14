@@ -54,6 +54,9 @@ def on_mouse_press(x, y, button, modifiers):
         if board.is_empty(i, j):
             board.put(i, j, player)
 
+            on_draw()
+            window.flip()
+
             global last_pos
             if board.winner == Color.NONE:
                 last_pos = board.ai(player.opponent)
