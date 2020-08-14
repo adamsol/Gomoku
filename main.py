@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import pyglet
-from pyglet import shapes
+from pyglet import shapes, text
 from pyglet.window import key, mouse
 
 from board import *
@@ -17,7 +17,9 @@ board_size = field_size * N
 
 board = Board(N)
 player = Color.BLACK
+
 last_pos = None
+info = None
 
 
 @window.event
@@ -39,6 +41,9 @@ def on_draw():
                 if last_pos == (i, j):
                     shapes.Rectangle(x=x-2, y=y-2, width=5, height=5, color=(255, 0, 0)).draw()
 
+    if info:
+        text.Label(info, x=window.width/2, y=50, anchor_x='center', color=(255, 255, 0, 255), bold=True).draw()
+
 
 @window.event
 def on_mouse_press(x, y, button, modifiers):
@@ -55,13 +60,21 @@ def on_mouse_press(x, y, button, modifiers):
             else:
                 last_pos = None
 
+            global info
+            if board.winner == player:
+                info = 'You won! (press R)'
+            elif board.winner == player.opponent:
+                info = 'You lost! (press R)'
+
 
 @window.event
 def on_key_press(symbol, modifiers):
     if symbol == key.R:
-        global board, player
+        global board, player, info
         board = Board(N)
         player = player.opponent
+        info = None
+
         if player == Color.WHITE:
             r = range(N//2 - 3, N//2 + 4)
             board.put(*random.choice([(i, j) for i in r for j in r]), player.opponent)
