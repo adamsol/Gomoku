@@ -17,6 +17,7 @@ board_size = field_size * N
 
 board = Board(N)
 player = Color.BLACK
+last_pos = None
 
 
 @window.event
@@ -35,6 +36,8 @@ def on_draw():
                 v = 200 if color == Color.WHITE else 30
                 x, y = (i+0.5)*field_size, (j+0.5)*field_size
                 shapes.Circle(x=x, y=y, radius=field_size/2-2, color=(v, v, v)).draw()
+                if last_pos == (i, j):
+                    shapes.Rectangle(x=x-2, y=y-2, width=5, height=5, color=(255, 0, 0)).draw()
 
 
 @window.event
@@ -46,8 +49,11 @@ def on_mouse_press(x, y, button, modifiers):
         if board.is_empty(i, j):
             board.put(i, j, player)
 
+            global last_pos
             if board.winner == Color.NONE:
-                board.ai(player.opponent)
+                last_pos = board.ai(player.opponent)
+            else:
+                last_pos = None
 
 
 @window.event
